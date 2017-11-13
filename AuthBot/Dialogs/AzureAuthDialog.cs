@@ -11,10 +11,13 @@ namespace AuthBot.Dialogs
     using Autofac;
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
-    
+    using System.Globalization;
+
     [Serializable]
     public class AzureAuthDialog : IDialog<string>
     {
+        private Regex MagicNumberRegex = new Regex(@"\b(\d{6})\b", RegexOptions.Singleline);
+
         protected string resourceId { get; }
         protected string[] scopes { get; }
         protected string prompt { get; }
@@ -67,8 +70,8 @@ namespace AuthBot.Dialogs
                         }
                         else
                         {
-
-                            if (msg.Text.Length >= 6 && magicNumber.ToString() == msg.Text.Substring(0, 6))
+                            var match = MagicNumberRegex.Match(msg.Text);
+                            if (match.Success && (magicNumber.ToString(CultureInfo.InvariantCulture) == match.Groups[1].Value))
                             {
                                 context.UserData.SetValue<string>(ContextConstants.MagicNumberValidated, "true");
                                 context.Done($"Thanks {authResult.UserName}. You are now logged in. ");
@@ -231,16 +234,10 @@ namespace AuthBot.Dialogs
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-
-
-
-
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-
-
-
-
+//
 // THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND

@@ -1,15 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See full license at the bottom of this file.
 namespace SampleAADV1Bot.Dialogs
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
     using AuthBot;
     using AuthBot.Dialogs;
-    using AuthBot.Models;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
+    using System;
     using System.Configuration;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     [Serializable]
     public class ActionDialog : IDialog<string>
     {
@@ -39,9 +39,7 @@ namespace SampleAADV1Bot.Dialogs
 
             if (message.Text == "logon")
             {
-
-
-                //endpoint v1
+                // endpoint v1
                 if (string.IsNullOrEmpty(await context.GetAccessToken(ConfigurationManager.AppSettings["ActiveDirectory.ResourceId"])))
                 {
                     await context.Forward(new AzureAuthDialog(ConfigurationManager.AppSettings["ActiveDirectory.ResourceId"]), this.ResumeAfterAuth, message, CancellationToken.None);
@@ -98,16 +96,10 @@ namespace SampleAADV1Bot.Dialogs
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-
-
-
-
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-
-
-
-
+//
 // THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND

@@ -1,14 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See full license at the bottom of this file.
 namespace AuthBot.Controllers
 {
-    using System;
-    using System.Net;
-    using System.Net.Http;
-    using System.Security.Cryptography;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Web;
-    using System.Web.Http;
     using Autofac;
     using Helpers;
     using Microsoft.Bot.Builder.Dialogs;
@@ -16,6 +8,14 @@ namespace AuthBot.Controllers
     using Microsoft.Bot.Connector;
     using Microsoft.Rest;
     using Models;
+    using System;
+    using System.Globalization;
+    using System.Net;
+    using System.Net.Http;
+    using System.Security.Cryptography;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using System.Web.Http;
 
     public class OAuthCallbackController : ApiController
     {
@@ -124,9 +124,9 @@ namespace AuthBot.Controllers
                     {
                         await Conversation.ResumeAsync(conversationReference, message);
                         if (message.ChannelId == "skypeforbusiness")
-                            resp.Content = new StringContent($"<html><body>Almost done! Please copy this number and paste it back to your chat so your authentication can complete:<br/> {magicNumber} </body></html>", System.Text.Encoding.UTF8, @"text/html");
+                            resp.Content = new StringContent($"<html><body>Almost done! Please copy this number and paste it back to your chat so your authentication can complete:<br/> {magicNumber.ToString(CultureInfo.InvariantCulture)} </body></html>", System.Text.Encoding.UTF8, @"text/html");
                         else
-                            resp.Content = new StringContent($"<html><body>Almost done! Please copy this number and paste it back to your chat so your authentication can complete:<br/> <h1>{magicNumber}</h1>.</body></html>", System.Text.Encoding.UTF8, @"text/html");
+                            resp.Content = new StringContent($"<html><body>Almost done! Please copy this number and paste it back to your chat so your authentication can complete:<br/> <h1>{magicNumber.ToString(CultureInfo.InvariantCulture)}</h1>.</body></html>", System.Text.Encoding.UTF8, @"text/html");
                     }
                     return resp;
                 }
@@ -170,16 +170,10 @@ namespace AuthBot.Controllers
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-
-
-
-
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-
-
-
-
+//
 // THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
