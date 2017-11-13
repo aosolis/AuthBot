@@ -39,8 +39,8 @@ namespace AuthBot.Controllers
                 // Callback is called with no pending message as a result the login flow cannot be resumed.
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
-
         }
+
         [HttpGet]
         [Route("api/OAuthCallback")]
         public async Task<HttpResponseMessage> OAuthCallback(
