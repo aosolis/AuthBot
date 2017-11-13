@@ -190,13 +190,13 @@ namespace AuthBot.Dialogs
                     }
                     else
                     {
-                        var resumptionCookie = new ResumptionCookie(msg);
+                        var conversationReference = new ConversationReference(msg.Id, msg.From, msg.Recipient, msg.Conversation, msg.ChannelId, msg.ServiceUrl);
 
                         string authenticationUrl;
                         if (resourceId != null)
-                            authenticationUrl = await AzureActiveDirectoryHelper.GetAuthUrlAsync(resumptionCookie, resourceId);
+                            authenticationUrl = await AzureActiveDirectoryHelper.GetAuthUrlAsync(conversationReference, resourceId);
                         else
-                            authenticationUrl = await AzureActiveDirectoryHelper.GetAuthUrlAsync(resumptionCookie, scopes);
+                            authenticationUrl = await AzureActiveDirectoryHelper.GetAuthUrlAsync(conversationReference, scopes);
 
                         await PromptToLogin(context, msg, authenticationUrl);
                         context.Wait(this.MessageReceivedAsync);

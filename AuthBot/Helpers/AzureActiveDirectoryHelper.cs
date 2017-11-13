@@ -7,12 +7,13 @@ namespace AuthBot.Helpers
     using System.Web;
     using Microsoft.Bot.Builder.Dialogs;
     using Models;
+    using Microsoft.Bot.Connector;
 
     public static class AzureActiveDirectoryHelper
     {
-        public static async Task<string> GetAuthUrlAsync(ResumptionCookie resumptionCookie, string resourceId)
+        public static async Task<string> GetAuthUrlAsync(ConversationReference conversationReference, string resourceId)
         {
-            var extraParameters = BuildExtraParameters(resumptionCookie);
+            var extraParameters = BuildExtraParameters(conversationReference);
 
             Uri redirectUri = new Uri(AuthSettings.RedirectUrl);
                 Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext context = new Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext(AuthSettings.EndpointUrl + "/" + AuthSettings.Tenant);
@@ -25,9 +26,9 @@ namespace AuthBot.Helpers
                 return uri.ToString();       
         }
 
-        public static async Task<string> GetAuthUrlAsync(ResumptionCookie resumptionCookie, string[] scopes)
+        public static async Task<string> GetAuthUrlAsync(ConversationReference conversationReference, string[] scopes)
         {
-            var extraParameters = BuildExtraParameters(resumptionCookie);
+            var extraParameters = BuildExtraParameters(conversationReference);
             Uri redirectUri = new Uri(AuthSettings.RedirectUrl);
             if (string.Equals(AuthSettings.Mode, "v2", StringComparison.OrdinalIgnoreCase))
             {
@@ -67,6 +68,7 @@ namespace AuthBot.Helpers
             AuthResult authResult = AuthResult.FromADALAuthenticationResult(result, tokenCache);
             return authResult;
         }
+
         public static async Task<AuthResult> GetTokenByAuthCodeAsync(string authorizationCode, Microsoft.Identity.Client.TokenCache tokenCache, string[] scopes)
         {
             Microsoft.Identity.Client.ConfidentialClientApplication client = new Microsoft.Identity.Client.ConfidentialClientApplication(AuthSettings.ClientId, AuthSettings.RedirectUrl, new Microsoft.Identity.Client.ClientCredential(AuthSettings.ClientSecret), tokenCache);            
@@ -102,9 +104,9 @@ namespace AuthBot.Helpers
             return Encoding.UTF8.GetString(HttpServerUtility.UrlTokenDecode(token));
         }
 
-        private static string BuildExtraParameters(ResumptionCookie resumptionCookie)
+        private static string BuildExtraParameters(ConversationReference conversationReference)
         {
-            var encodedCookie = UrlToken.Encode(resumptionCookie);
+            var encodedCookie = UrlToken.Encode(conversationReference);
 
             //var queryString = HttpUtility.ParseQueryString(string.Empty);
             //queryString["userId"] = resumptionCookie.Address.UserId;

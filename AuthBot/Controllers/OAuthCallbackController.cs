@@ -65,9 +65,9 @@ namespace AuthBot.Controllers
                 {
                 }
 
-                var resumptionCookie = UrlToken.Decode<ResumptionCookie>(queryParams);
+                var conversationReference = UrlToken.Decode<ConversationReference>(queryParams);
                 // Create the message that is send to conversation to resume the login flow
-                var message = resumptionCookie.GetMessage();
+                var message = conversationReference.GetPostToBotMessage();
                
                 using (var scope = DialogModule.BeginLifetimeScope(Conversation.Container, message))
                 {
@@ -82,7 +82,7 @@ namespace AuthBot.Controllers
                     else if (string.Equals(AuthSettings.Mode, "v2", StringComparison.OrdinalIgnoreCase))
                     {
                         // Exchange the Auth code with Access token
-                        var token = await AzureActiveDirectoryHelper.GetTokenByAuthCodeAsync(code, (Microsoft.Identity.Client.TokenCache)tokenCache,Models.AuthSettings.Scopes);
+                        var token = await AzureActiveDirectoryHelper.GetTokenByAuthCodeAsync(code, (Microsoft.Identity.Client.TokenCache)tokenCache, Models.AuthSettings.Scopes);
                         authResult = token;
                     }
                     else if (string.Equals(AuthSettings.Mode, "b2c", StringComparison.OrdinalIgnoreCase))
@@ -117,12 +117,12 @@ namespace AuthBot.Controllers
                     if (!writeSuccessful)
                     {
                         message.Text = String.Empty; // fail the login process if we can't write UserData
-                        await Conversation.ResumeAsync(resumptionCookie, message);
+                        await Conversation.ResumeAsync(conversationReference, message);
                         resp.Content = new StringContent("<html><body>Could not log you in at this time, please try again later</body></html>", System.Text.Encoding.UTF8, @"text/html");
                     }
                     else
                     {
-                        await Conversation.ResumeAsync(resumptionCookie, message);
+                        await Conversation.ResumeAsync(conversationReference, message);
                         if (message.ChannelId == "skypeforbusiness")
                             resp.Content = new StringContent($"<html><body>Almost done! Please copy this number and paste it back to your chat so your authentication can complete:<br/> {magicNumber} </body></html>", System.Text.Encoding.UTF8, @"text/html");
                         else
@@ -151,7 +151,6 @@ namespace AuthBot.Controllers
             return number;
 
         }
-
     }
 }
 
